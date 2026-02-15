@@ -39,15 +39,9 @@ async function getFolderContents(folderId, userId) {
 		},
 	});
 
-	const files = await prisma.file.findMany({
-		where: {
-			folderId,
-			userId,
-		},
-		orderBy: {
-			name: "asc",
-		},
-	});
+	const files = await import("./fileModel.js").then((m) =>
+		m.default.getFilesInFolder(folderId, userId),
+	);
 
 	return { children, files };
 }

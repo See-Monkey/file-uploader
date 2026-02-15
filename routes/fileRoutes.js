@@ -13,6 +13,7 @@ const router = Router();
 router.post(
 	"/folders/:id/upload",
 	isAuth,
+	fileController.uploadMiddleware.single("file"),
 	validateFile,
 	handleValidationErrors("folder"),
 	fileController.uploadFile,
