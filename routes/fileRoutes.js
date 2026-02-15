@@ -1,6 +1,7 @@
 import { Router } from "express";
+import { isAuth } from "../middleware/auth.js";
 import {
-	validateUser,
+	validateFile,
 	handleValidationErrors,
 } from "../middleware/validators.js";
 
@@ -9,15 +10,21 @@ import fileController from "./controllers/fileController.js";
 const router = Router();
 
 // upload file into folder
-// POST   /folders/:id/upload
+router.post(
+	"/folders/:id/upload",
+	isAuth,
+	validateFile,
+	handleValidationErrors("folder"),
+	fileController.uploadFile,
+);
 
 // get file details
-// GET /files/:id
+router.get("/files/:id", isAuth, fileController.getFile);
 
 // download file
-//GET    /files/:id/download
+router.get("/files/:id/download", isAuth, fileController.downloadFile);
 
 // delete file
-// DELETE /files/:id
+router.delete("/files/:id", isAuth, fileController.deleteFile);
 
 export default router;

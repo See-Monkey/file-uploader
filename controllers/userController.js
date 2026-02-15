@@ -4,6 +4,10 @@ async function getIndex(req, res) {
 	res.render("index");
 }
 
+async function getRegister(req, res) {
+	res.render("register");
+}
+
 async function register(req, res, next) {
 	try {
 		const { username, password } = req.body;
@@ -29,5 +33,6 @@ async function register(req, res, next) {
 
 export default {
 	getIndex,
+	getRegister,
 	register,
 };

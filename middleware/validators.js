@@ -1,7 +1,13 @@
 import { body, validationResult } from "express-validator";
 
+// Shared base regex for names: letters, numbers, dots, underscores, dashes
+const NAME_REGEX = /^[a-zA-Z0-9._-]+$/;
+
+// Forbidden single/double dot (current/parent folder)
+const FORBIDDEN_NAMES = /^(\.|..)$/;
+
 export const validateUser = [
-	body("username") // assuming username is email address
+	body("username")
 		.trim()
 		.notEmpty()
 		.withMessage("Email address is required")
@@ -21,8 +27,38 @@ export const validateUser = [
 			}
 			return true; // validation passed
 		}),
-	body("firstName").trim().notEmpty().withMessage("First name is required"),
-	body("lastName").trim().notEmpty().withMessage("Last name is required"),
+];
+
+export const validateFolder = [
+	body("name")
+		.trim()
+		.notEmpty()
+		.withMessage("Folder name is required")
+		.matches(NAME_REGEX)
+		.withMessage(
+			"Folder name can only contain letters, numbers, dots, underscores, and dashes",
+		)
+		.isLength({ max: 64 })
+		.withMessage("Folder name must be 64 characters or less")
+		.not()
+		.matches(FORBIDDEN_NAMES)
+		.withMessage("Folder name cannot be '.' or '..'"),
+];
+
+export const validateFile = [
+	body("name")
+		.trim()
+		.notEmpty()
+		.withMessage("File name is required")
+		.matches(NAME_REGEX)
+		.withMessage(
+			"File name can only contain letters, numbers, dots, underscores, and dashes",
+		)
+		.isLength({ max: 128 })
+		.withMessage("File name must be 128 characters or less")
+		.not()
+		.matches(FORBIDDEN_NAMES)
+		.withMessage("File name cannot be '.' or '..'"),
 ];
 
 export function handleValidationErrors(view) {
