@@ -3,8 +3,6 @@ import passport from "passport";
 import { isAuth } from "../middleware/auth.js";
 import {
 	validateUser,
-	validateMessage,
-	validateUpgrade,
 	handleValidationErrors,
 } from "../middleware/validators.js";
 

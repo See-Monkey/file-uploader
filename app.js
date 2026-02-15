@@ -8,6 +8,8 @@ import { configurePassport } from "./config/passport.js";
 import { prisma } from "./config/prisma.js";
 import { PrismaSessionStore } from "@quixo3/prisma-session-store";
 import userRoutes from "./routes/userRoutes.js";
+import folderRoutes from "./routes/folderRoutes.js";
+import fileRoutes from "./routes/fileRoutes.js";
 
 const app = express();
 

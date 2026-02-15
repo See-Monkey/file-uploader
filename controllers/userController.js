@@ -19,7 +19,7 @@ async function register(req, res, next) {
 
 		req.login(user, (err) => {
 			if (err) return next(err);
-			res.redirect("/messages");
+			res.redirect("/folders");
 		});
 	} catch (err) {
 		next(err);
