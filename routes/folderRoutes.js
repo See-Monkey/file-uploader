@@ -6,6 +6,8 @@ import {
 
 import folderController from "./controllers/folderController.js";
 
+const router = Router();
+
 // view folder contents
 // GET    /folders/:id
 
@@ -17,3 +19,5 @@ import folderController from "./controllers/folderController.js";
 
 // delete folder
 // DELETE /folders/:id
+
+export default router;

@@ -6,6 +6,8 @@ import {
 
 import fileController from "./controllers/fileController.js";
 
+const router = Router();
+
 // upload file into folder
 // POST   /folders/:id/upload
 
@@ -17,3 +19,5 @@ import fileController from "./controllers/fileController.js";
 
 // delete file
 // DELETE /files/:id
+
+export default router;

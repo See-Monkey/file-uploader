@@ -58,6 +58,8 @@ app.use((req, res, next) => {
 
 // custom routers
 app.use("/", userRoutes);
+app.use("/folders", folderRoutes);
+app.use("/files", fileRoutes);
 
 // 404 for no routes found
 app.use((req, res, next) => {

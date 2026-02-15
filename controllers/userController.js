@@ -6,17 +6,18 @@ async function getIndex(req, res) {
 
 async function register(req, res, next) {
 	try {
-		const { username, password, firstName, lastName, avatarURL } = req.body;
+		const { username, password } = req.body;
 
+		// Create user (handles hashing inside model)
 		const user = await userModel.createUser({
 			username,
-			password: password,
-			firstname: firstName,
-			lastname: lastName,
-			role_id: 1,
-			avatar_url: avatarURL,
+			password,
 		});
 
+		// Create root folder for this user
+		await folderModel.createRoot(user.id);
+
+		// Log user in
 		req.login(user, (err) => {
 			if (err) return next(err);
 			res.redirect("/folders");
