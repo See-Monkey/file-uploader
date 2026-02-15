@@ -5,7 +5,7 @@ import {
 	handleValidationErrors,
 } from "../middleware/validators.js";
 
-import folderController from "./controllers/folderController.js";
+import folderController from "../controllers/folderController.js";
 
 const router = Router();
 
