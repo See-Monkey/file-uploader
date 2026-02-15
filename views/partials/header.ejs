@@ -1,0 +1,23 @@
+<head>
+  <link rel="stylesheet" href="/css/reset.css">
+	<link rel="stylesheet" href="/css/header.css" />
+</head>
+<header>
+  <h1>File Uploader</h1>
+
+  <div class="headerContainer">
+    <% if (!user) { %>
+      <!-- Logged out -->
+      <div class="loginLinks">
+        <a href="/">Login</a>
+        <a href="/register">Register</a>
+      </div>
+    <% } else { %>
+      <!-- Logged in -->
+      
+      <form action="/logout" method="POST" class="inlineForm">
+        <button type="submit">Logout</button>
+      </form>
+    <% } %>
+  </div>
+</header>

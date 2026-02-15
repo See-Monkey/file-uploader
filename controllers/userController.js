@@ -1,11 +1,12 @@
 import userModel from "../models/userModel.js";
+import folderModel from "../models/folderModel.js";
 
 async function getIndex(req, res) {
-	res.render("index");
+	res.render("index", { errors: [] });
 }
 
 async function getRegister(req, res) {
-	res.render("register");
+	res.render("register", { errors: [] });
 }
 
 async function register(req, res, next) {

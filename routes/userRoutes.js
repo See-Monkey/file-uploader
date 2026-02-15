@@ -15,7 +15,7 @@ router.get("/", userController.getIndex);
 router.post(
 	"/login",
 	passport.authenticate("local", {
-		successRedirect: "/",
+		successRedirect: "/folders",
 		failureRedirect: "/",
 	}),
 );

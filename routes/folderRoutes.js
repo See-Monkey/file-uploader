@@ -2,29 +2,41 @@ import { Router } from "express";
 import { isAuth } from "../middleware/auth.js";
 import {
 	validateFolder,
+	validateFile,
 	handleValidationErrors,
 } from "../middleware/validators.js";
 
 import folderController from "../controllers/folderController.js";
+import fileController from "../controllers/fileController.js";
 
 const router = Router();
 
 // view folder contents
-router.get("/folders", isAuth, folderController.getRoot);
-router.get("/folders/:id", isAuth, folderController.getFolder);
+router.get("/", isAuth, folderController.getRoot);
+router.get("/:id", isAuth, folderController.getFolder);
 
 // create folder
 router.post(
-	"/folders",
+	"/",
 	isAuth,
 	validateFolder,
 	handleValidationErrors("folder"),
 	folderController.createFolder,
 );
 
+// upload file into a folder
+router.post(
+	"/:id/upload",
+	isAuth,
+	fileController.uploadMiddleware.single("file"),
+	validateFile,
+	handleValidationErrors("folder"),
+	fileController.uploadFile,
+);
+
 // rename folder
 router.put(
-	"/folders/:id",
+	"/:id",
 	isAuth,
 	validateFolder,
 	handleValidationErrors("folder"),
@@ -32,6 +44,6 @@ router.put(
 );
 
 // delete folder
-router.delete("/folders/:id", isAuth, folderController.deleteFolder);
+router.delete("/:id", isAuth, folderController.deleteFolder);
 
 export default router;

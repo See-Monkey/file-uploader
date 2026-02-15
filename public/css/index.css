@@ -1,0 +1,33 @@
+body {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+
+main {
+	flex: 1;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-image: url("../img/philipp-dusel-2F-m1FvoJT4-unsplash.jpg");
+	object-fit: cover;
+	background-position: center;
+}
+
+.container {
+	background-color: rgba(255, 255, 255, 0.1);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	border: 1px solid rgba(255, 255, 255, 0.3);
+	box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+	border-radius: 20px;
+	padding: 24px;
+}
+
+#loginForm {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	align-items: center;
+	padding: 20px 0 30px;
+}

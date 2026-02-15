@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Register</title>
+  <link rel="stylesheet" href="/css/register.css" />
+</head>
+<body>
+    <%- include('partials/header') %>
+
+  <main>
+    <div class="container">
+      <h1>Register</h1>
+      <% if (errors) { %>
+        <ul class="errors">
+          <% errors.forEach(err => { %>
+            <li><%= err.msg %></li>
+          <% }) %>
+        </ul>
+      <% } %>
+      <form action="/register" method="POST" id="registerForm">
+        <label>Email:
+          <input type="text" name="username" required>
+        </label>
+        <label>Password:
+          <input type="password" name="password" required>
+        </label>
+        <label>Verify Password:
+          <input type="password" name="verifyPassword" required>
+        </label>
+        <button type="submit">Register</button>
+      </form>
+      <p>Already have an account? <a href="/">Login here</a></p>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" href="/css/index.css" />
+</head>
+<body>
+    <%- include('partials/header') %>
+
+    <main>
+        <div class="container">
+            <h1>Login</h1>
+            <% if (errors) { %>
+                <ul class="errors">
+                <% errors.forEach(err => { %>
+                    <li><%= err.msg %></li>
+                <% }) %>
+                </ul>
+            <% } %>
+            <form action="/login" method="POST" id="loginForm">
+                <label>Email:</label>
+                <input type="text" name="username" required>
+                <label>Password:</label>
+                <input type="password" name="password" required>
+                <button type="submit">Login</button>
+            </form>
+            <p>Don't have an account? <a href="/register">Register here</a></p>
+        </div>
+    </main>
+</body>
+</html>
