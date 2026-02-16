@@ -1,12 +1,132 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>Login</title>
-		<link rel="stylesheet" href="/css/folder.css" />
-	</head>
-	<body>
-		<%- include('partials/header') %>
+<head>
+  <title><%= folder.name %></title>
+  <link rel="stylesheet" href="/css/folder.css" />
+</head>
+<body>
+  <%- include('partials/header') %>
 
-		<main>Folder</main>
-	</body>
+  <main class="folderPage">
+
+    <% if (error) { %>
+      <p class="error"><%= error %></p>
+    <% } else { %>
+
+      <!-- Header -->
+      <section class="folderHeader">
+        <h1><%= folder.name %></h1>
+
+        <div class="folderActions">
+          <button id="renameBtn">Edit</button>
+
+          <% if (folder.parentId) { %>
+            <button id="deleteBtn" class="dangerBtn">Delete</button>
+          <% } %>
+        </div>
+      </section>
+
+      <!-- Breadcrumbs -->
+      <nav class="breadcrumbs">
+        <% breadcrumbs.forEach((crumb, index) => { %>
+          <% if (index !== 0) { %> / <% } %>
+          <a href="/folders/<%= crumb.id %>"><%= crumb.name %></a>
+        <% }) %>
+      </nav>
+
+      <!-- Content -->
+      <section class="contentGrid">
+
+        <% children.forEach(child => { %>
+          <a href="/folders/<%= child.id %>" class="item folderItem">
+            <div class="icon">📁</div>
+            <span><%= child.name %></span>
+          </a>
+        <% }) %>
+
+        <% files.forEach(file => { %>
+          <a href="/files/<%= file.id %>" class="item fileItem">
+            <div class="icon">📄</div>
+            <span><%= file.name %></span>
+          </a>
+        <% }) %>
+
+      </section>
+
+      <!-- New Folder -->
+      <section class="newFolderSection">
+        <button id="newFolderBtn">+ New Folder</button>
+      </section>
+
+      <!-- Rename Modal -->
+      <dialog id="renameDialog">
+        <form method="POST" action="/folders/<%= folder.id %>/rename">
+          <h2>Rename Folder</h2>
+          <input type="text" name="name" value="<%= folder.name %>" required />
+          <div class="modalActions">
+            <button type="submit">Save</button>
+            <button type="button" id="closeRename">Cancel</button>
+          </div>
+        </form>
+      </dialog>
+
+      <!-- Delete Modal -->
+      <dialog id="deleteDialog">
+        <form method="POST" action="/folders/<%= folder.id %>/delete">
+          <h2>Delete Folder</h2>
+          <p>This will permanently delete this folder and ALL of its contents.</p>
+          <div class="modalActions">
+            <button type="submit" class="dangerBtn">Confirm Delete</button>
+            <button type="button" id="closeDelete">Cancel</button>
+          </div>
+        </form>
+      </dialog>
+
+      <!-- New Folder Modal -->
+      <dialog id="newFolderDialog">
+        <form method="POST" action="/folders">
+          <input type="hidden" name="parentId" value="<%= folder.id %>" />
+          <h2>Create Folder</h2>
+          <input type="text" name="name" required />
+          <div class="modalActions">
+            <button type="submit">Create</button>
+            <button type="button" id="closeNewFolder">Cancel</button>
+          </div>
+        </form>
+      </dialog>
+
+    <% } %>
+
+  </main>
+
+  <script>
+    const renameBtn = document.getElementById('renameBtn');
+    const renameDialog = document.getElementById('renameDialog');
+    const closeRename = document.getElementById('closeRename');
+
+    const deleteBtn = document.getElementById('deleteBtn');
+    const deleteDialog = document.getElementById('deleteDialog');
+    const closeDelete = document.getElementById('closeDelete');
+
+    const newFolderBtn = document.getElementById('newFolderBtn');
+    const newFolderDialog = document.getElementById('newFolderDialog');
+    const closeNewFolder = document.getElementById('closeNewFolder');
+
+    if (renameBtn) {
+      renameBtn.addEventListener('click', () => renameDialog.showModal());
+      closeRename.addEventListener('click', () => renameDialog.close());
+    }
+
+    if (deleteBtn) {
+      deleteBtn.addEventListener('click', () => deleteDialog.showModal());
+      closeDelete.addEventListener('click', () => deleteDialog.close());
+    }
+
+    if (newFolderBtn) {
+      newFolderBtn.addEventListener('click', () => newFolderDialog.showModal());
+      closeNewFolder.addEventListener('click', () => newFolderDialog.close());
+    }
+  </script>
+
+</body>
 </html>

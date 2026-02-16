@@ -16,10 +16,16 @@ async function getRoot(req, res, next) {
 		const rootFolder = await folderModel.getRootByUser(req.user.id);
 
 		if (!rootFolder) {
-			return res
-				.status(404)
-				.render("folder", { error: "Root folder not found" });
+			return res.status(404).render("folder", {
+				folder: null,
+				children: [],
+				files: [],
+				breadcrumbs: [],
+				error: "Root folder not found",
+			});
 		}
+
+		const breadcrumbs = [rootFolder];
 
 		const contents = await folderModel.getFolderContents(
 			rootFolder.id,
@@ -30,6 +36,8 @@ async function getRoot(req, res, next) {
 			folder: rootFolder,
 			children: contents.children,
 			files: contents.files,
+			breadcrumbs,
+			error: null,
 		});
 	} catch (err) {
 		next(err);
@@ -43,8 +51,19 @@ async function getFolder(req, res, next) {
 		const folder = await folderModel.getFolderById(folderId, req.user.id);
 
 		if (!folder) {
-			return res.status(404).render("folder", { error: "Folder not found" });
+			return res.status(404).render("folder", {
+				folder: null,
+				children: [],
+				files: [],
+				breadcrumbs: [],
+				error: "Folder not found",
+			});
 		}
+
+		const breadcrumbs = await folderModel.getFolderBreadcrumbs(
+			folder.id,
+			req.user.id,
+		);
 
 		const contents = await folderModel.getFolderContents(
 			folder.id,
@@ -55,6 +74,8 @@ async function getFolder(req, res, next) {
 			folder,
 			children: contents.children,
 			files: contents.files,
+			breadcrumbs,
+			error: null,
 		});
 	} catch (err) {
 		next(err);
@@ -84,7 +105,7 @@ async function renameFolder(req, res, next) {
 
 		const folder = await folderModel.renameFolder(folderId, name, req.user.id);
 
-		res.redirect(folder.parentId ? `/folders/${folder.parentId}` : "/folders");
+		res.redirect(`/folders/${folder.id}`);
 	} catch (err) {
 		next(err);
 	}

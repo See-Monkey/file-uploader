@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title><%= file.name %></title>
+		<link rel="stylesheet" href="/css/file.css" />
+	</head>
+	<body>
+		<%- include('partials/header') %>
+
+		<main class="filePage">
+			<section class="fileCard">
+				<div class="fileIcon">📄</div>
+
+				<h1><%= file.name %></h1>
+
+				<ul class="fileDetails">
+					<li><strong>Size:</strong> <%= file.size %> bytes</li>
+					<li><strong>Type:</strong> <%= file.mimetype %></li>
+					<li>
+						<strong>Uploaded:</strong> <%= file.createdAt.toDateString() %>
+					</li>
+				</ul>
+
+				<a href="#" class="downloadBtn">Download</a>
+			</section>
+		</main>
+	</body>
+</html>

@@ -46,6 +46,26 @@ async function getFolderContents(folderId, userId) {
 	return { children, files };
 }
 
+async function getFolderBreadcrumbs(folderId, userId) {
+	const breadcrumbs = [];
+
+	let current = await prisma.folder.findFirst({
+		where: { id: folderId, userId },
+	});
+
+	while (current) {
+		breadcrumbs.unshift(current);
+
+		if (!current.parentId) break;
+
+		current = await prisma.folder.findFirst({
+			where: { id: current.parentId, userId },
+		});
+	}
+
+	return breadcrumbs;
+}
+
 async function createFolder({ name, parentId = null, userId }) {
 	return prisma.folder.create({
 		data: {
@@ -57,14 +77,22 @@ async function createFolder({ name, parentId = null, userId }) {
 }
 
 async function renameFolder(folderId, name, userId) {
-	return prisma.folder.updateMany({
+	// First verify folder exists AND belongs to user
+	const folder = await prisma.folder.findFirst({
 		where: {
 			id: folderId,
 			userId,
 		},
-		data: {
-			name,
-		},
+	});
+
+	if (!folder) {
+		throw new Error("Folder not found or not owned by user");
+	}
+
+	// Now safely update
+	return prisma.folder.update({
+		where: { id: folderId },
+		data: { name },
 	});
 }
 
@@ -97,6 +125,7 @@ export default {
 	getRootByUser,
 	getFolderById,
 	getFolderContents,
+	getFolderBreadcrumbs,
 	createFolder,
 	renameFolder,
 	deleteFolder,

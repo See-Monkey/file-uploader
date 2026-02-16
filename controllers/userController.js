@@ -2,6 +2,10 @@ import userModel from "../models/userModel.js";
 import folderModel from "../models/folderModel.js";
 
 async function getIndex(req, res) {
+	if (req.user) {
+		return res.redirect("/folders");
+	}
+
 	res.render("index", { errors: [] });
 }
 

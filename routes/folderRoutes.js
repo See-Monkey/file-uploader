@@ -35,8 +35,8 @@ router.post(
 );
 
 // rename folder
-router.put(
-	"/:id",
+router.post(
+	"/:id/rename",
 	isAuth,
 	validateFolder,
 	handleValidationErrors("folder"),
@@ -44,6 +44,6 @@ router.put(
 );
 
 // delete folder
-router.delete("/:id", isAuth, folderController.deleteFolder);
+router.post("/:id/delete", isAuth, folderController.deleteFolder);
 
 export default router;
