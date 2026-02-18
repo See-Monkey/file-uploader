@@ -65,7 +65,7 @@
           <img src="/img/folder-plus.svg" alt="">
           <p>New Folder</p>
         </button>
-        <button id="newFileBtn">
+        <button id="uploadFileBtn">
           <img src="/img/file-document-plus-outline.svg" alt="">
           <p>Upload File</p>
         </button>
@@ -108,6 +108,19 @@
         </form>
       </dialog>
 
+      <!-- Upload File Modal -->
+       <dialog id="uploadFileDialog">
+          <form action="/upload" enctype="multipart/form-data" method="post">
+              <input type="hidden" name="parentId" value="<%= folder.id %>" />
+              <h2>Upload File</h2>
+              <input type="file" class="fileUploadInput" name="uploadedFile" />
+              <div class="modalActions">
+                <button type="submit">Upload</button>
+                <button type="button" id="closeUploadBtn">Cancel</button>
+              </div>
+          </form>
+       </dialog>
+
     <% } %>
 
   </main>
@@ -125,6 +138,10 @@
     const newFolderDialog = document.getElementById('newFolderDialog');
     const closeNewFolder = document.getElementById('closeNewFolder');
 
+    const uploadFileBtn = document.getElementById('uploadFileBtn');
+    const uploadFileDialog = document.getElementById('uploadFileDialog');
+    const closeUploadBtn = document.getElementById('closeUploadBtn');
+
     if (renameBtn) {
       renameBtn.addEventListener('click', () => renameDialog.showModal());
       closeRename.addEventListener('click', () => renameDialog.close());
@@ -138,6 +155,11 @@
     if (newFolderBtn) {
       newFolderBtn.addEventListener('click', () => newFolderDialog.showModal());
       closeNewFolder.addEventListener('click', () => newFolderDialog.close());
+    }
+
+    if (uploadFileBtn) {
+      uploadFileBtn.addEventListener('click', () => uploadFileDialog.showModal());
+      closeUploadBtn.addEventListener('click', () => uploadFileDialog.close());
     }
   </script>
 
