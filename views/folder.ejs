@@ -14,17 +14,23 @@
     <% } else { %>
 
       <!-- Header -->
-      <section class="folderHeader">
+      <div class="folderHeader">
         <h1><%= folder.name %></h1>
 
         <div class="folderActions">
-          <button id="renameBtn">Edit</button>
+          <button id="renameBtn">
+            <img src="/img/folder-edit.svg" alt="edit">
+            <p>Rename</p>
+          </button>
 
           <% if (folder.parentId) { %>
-            <button id="deleteBtn" class="dangerBtn">Delete</button>
+            <button id="deleteBtn" class="dangerBtn">
+              <img src="/img/delete-forever.svg" alt="delete">
+              <p>Delete</p>
+            </button>
           <% } %>
         </div>
-      </section>
+      </div>
 
       <!-- Breadcrumbs -->
       <nav class="breadcrumbs">
@@ -39,24 +45,31 @@
 
         <% children.forEach(child => { %>
           <a href="/folders/<%= child.id %>" class="item folderItem">
-            <div class="icon">📁</div>
-            <span><%= child.name %></span>
+            <img src="/img/folder-open.svg" alt="folder">
+            <p class="folderName"><%= child.name %></p>
           </a>
         <% }) %>
 
         <% files.forEach(file => { %>
           <a href="/files/<%= file.id %>" class="item fileItem">
-            <div class="icon">📄</div>
-            <span><%= file.name %></span>
+            <img src="/img/file-document-outline.svg" alt="file">
+            <p class="fileName"><%= file.name %></p>
           </a>
         <% }) %>
 
       </section>
 
       <!-- New Folder -->
-      <section class="newFolderSection">
-        <button id="newFolderBtn">+ New Folder</button>
-      </section>
+      <div class="newFolderFile">
+        <button id="newFolderBtn">
+          <img src="/img/folder-plus.svg" alt="">
+          <p>New Folder</p>
+        </button>
+        <button id="newFileBtn">
+          <img src="/img/file-document-plus-outline.svg" alt="">
+          <p>Upload File</p>
+        </button>
+      </div>
 
       <!-- Rename Modal -->
       <dialog id="renameDialog">
