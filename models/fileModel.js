@@ -1,13 +1,21 @@
 import { prisma } from "../config/prisma.js";
-import fs from "fs";
 
-async function createFile({ name, path, size, mimetype, folderId, userId }) {
+async function createFile({
+	name,
+	url,
+	publicId,
+	size,
+	mimeType,
+	folderId,
+	userId,
+}) {
 	return prisma.file.create({
 		data: {
 			name,
-			path,
+			url,
+			publicId,
 			size,
-			mimetype,
+			mimeType,
 			folderId,
 			userId,
 		},
@@ -21,30 +29,6 @@ async function getFileById(fileId, userId) {
 			userId,
 		},
 	});
-}
-
-async function deleteFile(fileId, userId) {
-	// Fetch the file first
-	const file = await prisma.file.findFirst({
-		where: { id: fileId, userId },
-		select: { folderId: true, path: true },
-	});
-
-	if (!file) {
-		throw new Error("File not found or not owned by user");
-	}
-
-	// Delete file from disk
-	if (fs.existsSync(file.path)) {
-		fs.unlinkSync(file.path);
-	}
-
-	// Delete DB record
-	await prisma.file.delete({
-		where: { id: fileId },
-	});
-
-	return file.folderId;
 }
 
 async function getFilesInFolder(folderId, userId) {
@@ -62,6 +46,5 @@ async function getFilesInFolder(folderId, userId) {
 export default {
 	createFile,
 	getFileById,
-	deleteFile,
 	getFilesInFolder,
 };

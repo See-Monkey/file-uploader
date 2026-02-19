@@ -1,38 +1,15 @@
 import fileModel from "../models/fileModel.js";
 import folderModel from "../models/folderModel.js";
 import multer from "multer";
+import cloudinary from "../config/cloudinary.js";
+import streamifier from "streamifier";
 import path from "path";
-import fs from "fs";
+import { prisma } from "../config/prisma.js";
+import https from "https";
 
 // Configure multer
-const storage = multer.diskStorage({
-	destination: function (req, file, cb) {
-		const folderId = req.params.id;
-		const uploadPath = path.join("uploads", folderId);
+const storage = multer.memoryStorage();
 
-		// Ensure folder exists
-		fs.mkdirSync(uploadPath, { recursive: true });
-		cb(null, uploadPath);
-	},
-	filename: function (req, file, cb) {
-		// Extract safe base name (no directories)
-		const originalName = path.basename(file.originalname);
-
-		// Separate extension
-		const ext = path.extname(originalName).toLowerCase();
-		const name = path.basename(originalName, ext);
-
-		// Sanitize name
-		let safeName = name
-			.replace(/\s+/g, "_") // spaces → _
-			.replace(/[^a-z0-9_-]/g, "") // remove unsafe chars
-			.slice(0, 50); // limit length
-
-		const finalName = `${safeName}${ext}`;
-
-		cb(null, finalName);
-	},
-});
 export const uploadMiddleware = multer({
 	storage,
 	limits: { fileSize: 25 * 1024 * 1024 }, // 25 MB
@@ -50,28 +27,61 @@ async function uploadFile(req, res, next) {
 	try {
 		const folderId = req.params.id;
 		const userId = req.user.id;
+		const file = req.file;
 
-		// Ensure folder exists and belongs to user
-		const folder = await folderModel.getFolderById(folderId, userId);
-		if (!folder) return res.status(404).send("Folder not found");
+		if (!file) {
+			return res.status(400).send("No file uploaded");
+		}
 
-		if (!req.file) return res.status(400).send("No file uploaded");
+		// Extract name + extension
+		const ext = path.extname(file.originalname).replace(".", ""); // "txt"
+		const baseName = path.basename(
+			file.originalname,
+			path.extname(file.originalname),
+		);
 
-		const { originalname, path: filePath, size, mimetype } = req.file;
+		// Mirror app folder structure in Cloudinary
+		const cloudinaryFolder = `users/${userId}/${folderId}`;
 
-		// Create file record in DB
-		await fileModel.createFile({
-			name: originalname,
-			path: filePath,
-			size,
-			mimetype,
-			folderId,
-			userId,
+		const uploadFromBuffer = () =>
+			new Promise((resolve, reject) => {
+				const stream = cloudinary.uploader.upload_stream(
+					{
+						folder: cloudinaryFolder,
+						resource_type: "auto",
+						public_id: baseName, // original filename (no extension)
+						format: ext, // extension
+						unique_filename: false, // don’t auto-randomize
+						overwrite: false, // prevent silent overwrite
+					},
+					(error, result) => {
+						if (error) reject(error);
+						else resolve(result);
+					},
+				);
+
+				streamifier.createReadStream(file.buffer).pipe(stream);
+			});
+
+		const result = await uploadFromBuffer();
+
+		// Save in DB
+		await prisma.file.create({
+			data: {
+				name: file.originalname,
+				url: result.secure_url,
+				publicId: result.public_id,
+				size: file.size,
+				mimeType: file.mimetype,
+				folderId,
+				userId,
+				resourceType: result.resource_type,
+			},
 		});
 
 		res.redirect(`/folders/${folderId}`);
-	} catch (err) {
-		next(err);
+	} catch (error) {
+		next(error);
 	}
 }
 
@@ -103,7 +113,18 @@ async function downloadFile(req, res, next) {
 		const file = await fileModel.getFileById(fileId, userId);
 		if (!file) return res.status(404).send("File not found");
 
-		res.download(file.path, file.name);
+		// res.download(file.path, file.name);
+		const safeName = file.name;
+
+		res.setHeader("Content-Disposition", `attachment; filename="${safeName}"`);
+
+		res.setHeader("Content-Type", file.mimeType);
+
+		https
+			.get(file.url, (cloudinaryRes) => {
+				cloudinaryRes.pipe(res);
+			})
+			.on("error", next);
 	} catch (err) {
 		next(err);
 	}
@@ -114,11 +135,30 @@ async function deleteFile(req, res, next) {
 		const fileId = req.params.id;
 		const userId = req.user.id;
 
-		const folderId = await fileModel.deleteFile(fileId, userId);
+		const file = await prisma.file.findFirst({
+			where: {
+				id: fileId,
+				userId,
+			},
+		});
 
-		res.redirect(`/folders/${folderId}`);
-	} catch (err) {
-		next(err);
+		if (!file) {
+			return res.status(404).send("File not found");
+		}
+
+		// Delete from Cloudinary
+		await cloudinary.uploader.destroy(file.publicId, {
+			resource_type: file.resourceType,
+		});
+
+		// Delete from DB
+		await prisma.file.delete({
+			where: { id: fileId },
+		});
+
+		res.redirect(`/folders/${file.folderId}`);
+	} catch (error) {
+		next(error);
 	}
 }
 

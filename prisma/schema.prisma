@@ -41,9 +41,11 @@ model Folder {
 model File {
   id        String   @id @default(uuid())
   name      String
-  path      String
+  url       String
+  publicId  String
   size      Int
-  mimetype  String
+  mimeType  String
+  resourceType  String
 
   folderId  String
   folder    Folder   @relation(fields: [folderId], references: [id], onDelete: Cascade)
