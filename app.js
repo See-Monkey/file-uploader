@@ -21,12 +21,17 @@ const __dirname = path.dirname(__filename);
 const assetsPath = path.join(__dirname, "public");
 app.use(express.static(assetsPath));
 
+// expose uploads folder used by multer
+const uploadPath = path.join(__dirname, "uploads");
+app.use("/uploads", express.static(uploadPath));
+
 // use ejs as view engine
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 // put form submissions into objects on req.body
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 // setup passport sessions
 app.use(

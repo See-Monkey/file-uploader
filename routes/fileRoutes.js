@@ -1,9 +1,5 @@
 import { Router } from "express";
 import { isAuth } from "../middleware/auth.js";
-import {
-	validateFile,
-	handleValidationErrors,
-} from "../middleware/validators.js";
 
 import fileController from "../controllers/fileController.js";
 

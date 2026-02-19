@@ -15,11 +15,36 @@ const storage = multer.diskStorage({
 		cb(null, uploadPath);
 	},
 	filename: function (req, file, cb) {
-		// Keep original filename, but could sanitize
-		cb(null, file.originalname);
+		// Extract safe base name (no directories)
+		const originalName = path.basename(file.originalname);
+
+		// Separate extension
+		const ext = path.extname(originalName).toLowerCase();
+		const name = path.basename(originalName, ext);
+
+		// Sanitize name
+		let safeName = name
+			.replace(/\s+/g, "_") // spaces → _
+			.replace(/[^a-z0-9_-]/g, "") // remove unsafe chars
+			.slice(0, 50); // limit length
+
+		const finalName = `${safeName}${ext}`;
+
+		cb(null, finalName);
 	},
 });
-export const uploadMiddleware = multer({ storage });
+export const uploadMiddleware = multer({
+	storage,
+	limits: { fileSize: 25 * 1024 * 1024 }, // 25 MB
+	fileFilter: (req, file, cb) => {
+		if (!allowedMimeTypes.includes(file.mimetype)) {
+			return cb(new Error("File type not allowed"));
+		} else if (blockedTypes.includes(file.mimetype)) {
+			return cb(new Error("Executable files are not allowed"));
+		}
+		cb(null, true);
+	},
+});
 
 async function uploadFile(req, res, next) {
 	try {
@@ -44,6 +69,7 @@ async function uploadFile(req, res, next) {
 			userId,
 		});
 
+		console.log("REQ.FILE:", req.file);
 		res.redirect(`/folders/${folderId}`);
 	} catch (err) {
 		next(err);
@@ -90,6 +116,43 @@ async function deleteFile(req, res, next) {
 		next(err);
 	}
 }
+
+const allowedMimeTypes = [
+	// Images
+	"image/jpeg",
+	"image/png",
+	"image/gif",
+	"image/webp",
+	"image/svg+xml",
+	"image/heic",
+
+	// Video
+	"video/mp4",
+	"video/webm",
+	"video/quicktime",
+	"video/x-matroska",
+
+	// Audio
+	"audio/mpeg",
+	"audio/wav",
+	"audio/ogg",
+	"audio/webm",
+	"audio/mp4",
+
+	// Documents
+	"application/pdf",
+	"text/plain",
+	"text/csv",
+];
+
+const blockedTypes = [
+	"application/x-msdownload", // .exe
+	"application/x-sh", // shell scripts
+	"application/x-bat", // .bat
+	"application/x-cmd",
+	"application/javascript",
+	"text/javascript",
+];
 
 export default {
 	uploadFile,

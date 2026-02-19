@@ -45,31 +45,24 @@ export const validateFolder = [
 		.withMessage("Folder name cannot be '.' or '..'"),
 ];
 
-export const validateFile = [
-	body("name")
-		.trim()
-		.notEmpty()
-		.withMessage("File name is required")
-		.matches(NAME_REGEX)
-		.withMessage(
-			"File name can only contain letters, numbers, dots, underscores, and dashes",
-		)
-		.isLength({ max: 128 })
-		.withMessage("File name must be 128 characters or less")
-		.not()
-		.matches(FORBIDDEN_NAMES)
-		.withMessage("File name cannot be '.' or '..'"),
-];
-
 export function handleValidationErrors(view) {
 	return (req, res, next) => {
 		const errors = validationResult(req);
+
 		if (!errors.isEmpty()) {
+			// Special case: folder upload route
+			if (view === "folder" && req.params.id) {
+				req.session.validationErrors = errors.array();
+				return res.redirect(`/folders/${req.params.id}`);
+			}
+
+			// Default behavior for other views
 			return res.status(400).render(view, {
 				errors: errors.array(),
 				userInput: req.body,
 			});
 		}
+
 		next();
 	};
 }

@@ -2,7 +2,6 @@ import { Router } from "express";
 import { isAuth } from "../middleware/auth.js";
 import {
 	validateFolder,
-	validateFile,
 	handleValidationErrors,
 } from "../middleware/validators.js";
 
@@ -29,8 +28,6 @@ router.post(
 	"/:id/upload",
 	isAuth,
 	fileController.uploadMiddleware.single("file"),
-	validateFile,
-	handleValidationErrors("folder"),
 	fileController.uploadFile,
 );
 

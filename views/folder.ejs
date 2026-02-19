@@ -110,10 +110,10 @@
 
       <!-- Upload File Modal -->
        <dialog id="uploadFileDialog">
-          <form action="/upload" enctype="multipart/form-data" method="post">
+          <form action="/folders/<%= folder.id %>/upload" enctype="multipart/form-data" method="POST">
               <input type="hidden" name="parentId" value="<%= folder.id %>" />
               <h2>Upload File</h2>
-              <input type="file" class="fileUploadInput" name="uploadedFile" />
+              <input type="file" class="fileUploadInput" name="file" required/>
               <div class="modalActions">
                 <button type="submit">Upload</button>
                 <button type="button" id="closeUploadBtn">Cancel</button>
