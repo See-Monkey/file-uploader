@@ -69,7 +69,6 @@ async function uploadFile(req, res, next) {
 			userId,
 		});
 
-		console.log("REQ.FILE:", req.file);
 		res.redirect(`/folders/${folderId}`);
 	} catch (err) {
 		next(err);

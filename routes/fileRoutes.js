@@ -12,6 +12,6 @@ router.get("/:id", isAuth, fileController.getFile);
 router.get("/:id/download", isAuth, fileController.downloadFile);
 
 // delete file
-router.delete("/:id", isAuth, fileController.deleteFile);
+router.post("/:id/delete", isAuth, fileController.deleteFile);
 
 export default router;

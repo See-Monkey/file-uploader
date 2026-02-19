@@ -34,7 +34,34 @@
 					Download
 				</button>
 				</form>
+
+				<button id="deleteBtn" class="dangerBtn">
+				Delete
+				</button>
 			</section>
+
+			<!-- Delete Modal -->
+			<dialog id="deleteDialog">
+			<form method="POST" action="/files/<%= file.id %>/delete">
+				<h2>Delete File</h2>
+				<p>This will permanently delete this file.</p>
+				<div class="modalActions">
+					<button type="submit" class="dangerBtn">Confirm Delete</button>
+					<button type="button" id="closeDelete">Cancel</button>
+				</div>
+			</form>
+			</dialog>
 		</main>
+
+		<script>
+			const deleteBtn = document.getElementById('deleteBtn');
+			const deleteDialog = document.getElementById('deleteDialog');
+			const closeDelete = document.getElementById('closeDelete');
+
+			if (deleteBtn) {
+				deleteBtn.addEventListener('click', () => deleteDialog.showModal());
+				closeDelete.addEventListener('click', () => deleteDialog.close());
+			}
+		</script>
 	</body>
 </html>
