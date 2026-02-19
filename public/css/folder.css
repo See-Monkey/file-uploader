@@ -67,6 +67,7 @@ main {
 
 	display: grid;
 	grid-template-columns: repeat(auto-fit, 150px);
+	grid-template-rows: 150px;
 	gap: 20px;
 }
 
@@ -133,4 +134,8 @@ dialog form {
 .modalActions {
 	display: flex;
 	gap: 20px;
+}
+
+dialog p {
+	text-align: center;
 }

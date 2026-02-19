@@ -33,12 +33,14 @@
       </div>
 
       <!-- Breadcrumbs -->
+       <% if (folder.parentId) { %>
       <nav class="breadcrumbs">
         <% breadcrumbs.forEach((crumb, index) => { %>
           <% if (index !== 0) { %> / <% } %>
           <a href="/folders/<%= crumb.id %>"><%= crumb.name %></a>
         <% }) %>
       </nav>
+      <% } %>
 
       <!-- Content -->
       <section class="contentGrid">
@@ -100,6 +102,7 @@
         <form method="POST" action="/folders">
           <input type="hidden" name="parentId" value="<%= folder.id %>" />
           <h2>Create Folder</h2>
+          <p>Folder name can only include letters, numbers, hyphens and underscores.</p>
           <input type="text" name="name" required />
           <div class="modalActions">
             <button type="submit">Create</button>
