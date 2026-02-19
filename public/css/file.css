@@ -2,11 +2,43 @@ body {
 	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
+	flex-direction: column;
 }
 
 main {
 	flex: 1;
 	display: flex;
-	justify-content: center;
+	flex-direction: column;
+	justify-content: flex-start;
 	align-items: center;
+}
+
+.breadcrumbs {
+	display: flex;
+	gap: 8px;
+	align-self: flex-start;
+	padding: 20px;
+	max-width: 100%;
+	flex-wrap: wrap;
+}
+
+.fileCard {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	align-items: center;
+	padding: 40px;
+	border: 2px solid black;
+	border-radius: 18px;
+	background-color: antiquewhite;
+}
+
+.fileImg {
+	height: 100px;
+	width: 100px;
+}
+
+#downloadBtn {
+	padding: 2px 10px;
+	margin-top: 30px;
 }

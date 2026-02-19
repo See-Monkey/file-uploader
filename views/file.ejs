@@ -8,8 +8,16 @@
 		<%- include('partials/header') %>
 
 		<main class="filePage">
+			<!-- Breadcrumbs -->
+			<nav class="breadcrumbs">
+				<% breadcrumbs.forEach((crumb, index) => { %>
+				<% if (index !== 0) { %> / <% } %>
+				<a href="/folders/<%= crumb.id %>"><%= crumb.name %></a>
+				<% }) %>
+			</nav>
+
 			<section class="fileCard">
-				<div class="fileIcon">📄</div>
+				<img src="/img/file-document-outline.svg" alt="file" class="fileImg">
 
 				<h1><%= file.name %></h1>
 
@@ -21,7 +29,11 @@
 					</li>
 				</ul>
 
-				<a href="#" class="downloadBtn">Download</a>
+				<form action="/files/<%= file.id %>/download" method="GET">
+				<button type="submit" id="downloadBtn">
+					Download
+				</button>
+				</form>
 			</section>
 		</main>
 	</body>

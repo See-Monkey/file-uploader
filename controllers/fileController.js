@@ -84,7 +84,13 @@ async function getFile(req, res, next) {
 		const file = await fileModel.getFileById(fileId, userId);
 		if (!file) return res.status(404).send("File not found");
 
-		res.render("file", { file });
+		// Get breadcrumbs from the file's folder
+		const breadcrumbs = await folderModel.getFolderBreadcrumbs(
+			file.folderId,
+			userId,
+		);
+
+		res.render("file", { file, breadcrumbs });
 	} catch (err) {
 		next(err);
 	}
