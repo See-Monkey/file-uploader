@@ -36,8 +36,15 @@
 				</form>
 
 				<button id="deleteBtn" class="dangerBtn">
-				Delete
+					Delete
 				</button>
+
+				<button id="shareBtn">Share</button>
+
+				<div id="shareModal" style="display:none;">
+					<input type="text" id="shareLinkInput" readonly />
+					<button onclick="copyLink()">Copy</button>
+				</div>
 			</section>
 
 			<!-- Delete Modal -->
@@ -61,6 +68,26 @@
 			if (deleteBtn) {
 				deleteBtn.addEventListener('click', () => deleteDialog.showModal());
 				closeDelete.addEventListener('click', () => deleteDialog.close());
+			}
+
+			document.getElementById("shareBtn").addEventListener("click", async () => {
+				const fileId = "<%= file.id %>";
+
+				const res = await fetch(`/files/${fileId}/share`, {
+				method: "POST"
+				});
+
+				const data = await res.json();
+
+				document.getElementById("shareLinkInput").value = data.url;
+				document.getElementById("shareModal").style.display = "block";
+			});
+
+			function copyLink() {
+				const input = document.getElementById("shareLinkInput");
+				input.select();
+				document.execCommand("copy");
+				alert("Copied!");
 			}
 		</script>
 	</body>

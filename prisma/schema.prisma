@@ -8,62 +8,72 @@ datasource db {
 }
 
 model User {
-  id         Int      @id @default(autoincrement())
-  username   String   @unique
-  password   String
-  role       String   @default("USER")
-  createdAt  DateTime @default(now())
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  role      String   @default("USER")
+  createdAt DateTime @default(now())
 
-  folders    Folder[]
-  files      File[]
+  folders Folder[]
+  files   File[]
 }
 
 model Folder {
-  id        String   @id @default(uuid())
-  name      String
+  id   String @id @default(uuid())
+  name String
 
-  parentId  String?
-  parent    Folder?  @relation("FolderHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
-  children  Folder[] @relation("FolderHierarchy")
+  parentId String?
+  parent   Folder?  @relation("FolderHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
+  children Folder[] @relation("FolderHierarchy")
 
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  files     File[]
+  files File[]
 
   createdAt DateTime @default(now())
 
+  @@unique([name, parentId, userId])
   @@index([userId])
   @@index([parentId])
-  @@unique([name, parentId, userId])
 }
 
 model File {
-  id        String   @id @default(uuid())
-  name      String
-  url       String
-  publicId  String
-  size      Int
-  mimeType  String
-  resourceType  String
+  id           String @id @default(uuid())
+  name         String
+  url          String
+  publicId     String
+  size         Int
+  mimeType     String
+  resourceType String
 
-  folderId  String
-  folder    Folder   @relation(fields: [folderId], references: [id], onDelete: Cascade)
+  folderId String
+  folder   Folder @relation(fields: [folderId], references: [id], onDelete: Cascade)
 
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime @default(now())
+  createdAt  DateTime    @default(now())
+  shareLinks ShareLink[]
 
+  @@unique([name, folderId, userId])
   @@index([userId])
   @@index([folderId])
-  @@unique([name, folderId, userId])
 }
 
+model ShareLink {
+  id     String @id @default(uuid())
+  token  String @unique
+  fileId String @unique
+  file   File   @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
 
 model Session {
   id        String   @id
   sid       String   @unique
   data      String
-  expiresAt   DateTime
+  expiresAt DateTime
 }

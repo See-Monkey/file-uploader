@@ -10,6 +10,7 @@ import { PrismaSessionStore } from "@quixo3/prisma-session-store";
 import userRoutes from "./routes/userRoutes.js";
 import folderRoutes from "./routes/folderRoutes.js";
 import fileRoutes from "./routes/fileRoutes.js";
+import shareRoutes from "./routes/shareRoutes.js";
 
 const app = express();
 
@@ -65,6 +66,7 @@ app.use((req, res, next) => {
 app.use("/", userRoutes);
 app.use("/folders", folderRoutes);
 app.use("/files", fileRoutes);
+app.use("/share", shareRoutes);
 
 // 404 for no routes found
 app.use((req, res, next) => {
