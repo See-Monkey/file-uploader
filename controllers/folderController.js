@@ -21,7 +21,7 @@ async function getRoot(req, res, next) {
 				children: [],
 				files: [],
 				breadcrumbs: [],
-				error: "Root folder not found",
+				errors: [{ msg: "Root folder not found" }],
 			});
 		}
 
@@ -37,7 +37,7 @@ async function getRoot(req, res, next) {
 			children: contents.children,
 			files: contents.files,
 			breadcrumbs,
-			error: null,
+			errors: [],
 		});
 	} catch (err) {
 		next(err);
@@ -56,7 +56,7 @@ async function getFolder(req, res, next) {
 				children: [],
 				files: [],
 				breadcrumbs: [],
-				error: "Folder not found",
+				errors: [{ msg: "Folder not found" }],
 			});
 		}
 
@@ -75,7 +75,7 @@ async function getFolder(req, res, next) {
 			children: contents.children,
 			files: contents.files,
 			breadcrumbs,
-			error: null,
+			errors: [],
 		});
 	} catch (err) {
 		next(err);

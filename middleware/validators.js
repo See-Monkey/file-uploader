@@ -1,4 +1,5 @@
 import { body, validationResult } from "express-validator";
+import { prisma } from "../config/prisma.js";
 
 // Shared base regex for names: letters, numbers, dots, underscores, dashes
 const NAME_REGEX = /^[a-zA-Z0-9._-]+$/;
@@ -46,17 +47,34 @@ export const validateFolder = [
 ];
 
 export function handleValidationErrors(view) {
-	return (req, res, next) => {
+	return async (req, res, next) => {
 		const errors = validationResult(req);
 
 		if (!errors.isEmpty()) {
-			// Special case: folder upload route
-			if (view === "folder" && req.params.id) {
-				req.session.validationErrors = errors.array();
-				return res.redirect(`/folders/${req.params.id}`);
+			if (view === "folder") {
+				let folder;
+
+				if (req.params.id) {
+					folder = await prisma.folder.findUnique({
+						where: { id: req.params.id },
+						include: { children: true, files: true },
+					});
+				} else {
+					// Creating a folder — provide safe fallback
+					folder = {
+						name: "New Folder",
+						children: [],
+						files: [],
+					};
+				}
+
+				return res.status(400).render("folder", {
+					folder,
+					errors: errors.array(),
+					userInput: req.body,
+				});
 			}
 
-			// Default behavior for other views
 			return res.status(400).render(view, {
 				errors: errors.array(),
 				userInput: req.body,

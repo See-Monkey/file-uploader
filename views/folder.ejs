@@ -9,8 +9,13 @@
 
   <main class="folderPage">
 
-    <% if (error) { %>
-      <p class="error"><%= error %></p>
+    <% if (errors && errors.length) { %>
+      <% errors.forEach(e => { %>
+        <div class="errorContainer">
+          <p class="error"><%= e.msg %></p>
+          <a href="javascript:history.back()">Go Back</a>
+        </div>
+      <% }) %>
     <% } else { %>
 
       <!-- Header -->
